@@ -1,30 +1,26 @@
 class Person:
-    people = {}  # Class attribute to store Person instances by name
 
-    def __init__(self, name: str, age: int):
+    people = {}
+
+    def __init__(self, name: str, age: int) -> None:
         self.name = name
         self.age = age
-        self.wife = None
-        self.husband = None
-        Person.people[name] = self  # Add instance to people dictionary
+        Person.people[name] = self
 
 
 def create_person_list(people: list) -> list:
     person_list = []
     for person_dict in people:
-        name = person_dict["name"]
-        age = person_dict["age"]
-        new_person = Person(name, age)
+        person = Person(person_dict["name"], person_dict["age"])
+        person_list.append(person)
 
-        # Link spouses
-        spouse_name = person_dict.get("wife") or person_dict.get("husband")
-        if spouse_name:
-            spouse = Person.people.get(spouse_name)
-            if spouse:
+    for person in person_list:
+        for person_dict in people:
+            if person_dict["name"] == person.name:
                 if "wife" in person_dict:
-                    new_person.wife = spouse
-                else:
-                    new_person.husband = spouse
-
-        person_list.append(new_person)
+                    if person_dict["wife"] is not None:
+                        person.wife = Person.people[person_dict["wife"]]
+                if "husband" in person_dict:
+                    if person_dict["husband"] is not None:
+                        person.husband = Person.people[person_dict["husband"]]
     return person_list
